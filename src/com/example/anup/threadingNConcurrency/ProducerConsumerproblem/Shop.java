@@ -1,9 +1,12 @@
 package com.example.anup.threadingNConcurrency.ProducerConsumerproblem;
 
+import java.util.LinkedList;
 import java.util.concurrent.Semaphore;
 
 public class Shop {
-    private int size;
+    private int size=10;
+    private LinkedList<Integer> list=new LinkedList<>();
+
     private Semaphore producerSemaphore=new Semaphore(5);
     private Semaphore consumerSemaphore=new Semaphore(0);
     public Shop()
@@ -12,13 +15,14 @@ public class Shop {
     }
     public void produce () throws InterruptedException {
         producerSemaphore.acquire();
-        if(size<5)
+        if(list.size()<5)
         {
-            Thread.sleep(500);
-            if(size<5)
+            Thread.sleep(1000);
+            if(list.size()<5)
             {
                 size++;
-                System.out.println("Produced 1 item. Total items in shop : " + size);
+                list.add(1);
+                System.out.println("Produced 1 item. Total items in shop : " + list.size() + " and size="+size+ " Thread id: "+Thread.currentThread().getName());
             }
 
         }
@@ -27,16 +31,15 @@ public class Shop {
 
     public void consume() throws InterruptedException {
         consumerSemaphore.acquire();
-        if(size>0)
+        if(list.size()>0)
         {
             Thread.sleep(1000);
-            if(size>0)
+            if(list.size()>0)
             {
                 size--;
-                System.out.println("Consumed 1 item. Total items in shop : " + size);
+                list.removeFirst();
+                System.out.println("Consumed 1 item. Total items in shop : " + list.size() +" and size="+size+ " Thread id: "+Thread.currentThread().getName());
             }
-
-
         }
         producerSemaphore.release();
     }
